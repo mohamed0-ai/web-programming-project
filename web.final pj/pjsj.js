@@ -1,0 +1,72 @@
+let users = [
+    { id: '001', name: 'John', address: 'Los Ang 225', email: 'john@example.com' },
+    { id: '002', name: 'Leo', address: '456 Ave de lan', email: 'leo@example.com' },
+    { id: '003', name: 'Robert', address: 'Los Be Ja 228', email: 'robert@gmail.com' },
+    { id: '004', name: 'David', address: 'Ang 669', email: 'david@gmail.com' }
+];
+
+let editIndex = null;
+
+function renderTable() {
+    const tableBody = document.getElementById('userTableBody');
+    tableBody.innerHTML = '';
+    users.forEach((user, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.address}</td>
+            <td>${user.email}</td>
+            <td>
+                <button class="btn btn-primary" onclick="startEdit(${index})">Edit</button>
+                <button class="btn btn-delete" onclick="deleteUser(${index})">Delete</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function deleteUser(index) {
+    if (confirm("هل تريد حذف هذا المستخدم؟")) {
+        users.splice(index, 1);
+        renderTable();
+    }
+}
+
+function startEdit(index) {
+    const user = users[index];
+    document.getElementById('userId').value = user.id;
+    document.getElementById('userName').value = user.name;
+    document.getElementById('userAddress').value = user.address;
+    document.getElementById('userEmail').value = user.email;
+    document.getElementById('submitBtn').textContent = "Update User";
+    editIndex = index;
+}
+
+document.getElementById('userForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const id = document.getElementById('userId').value.trim();
+    const name = document.getElementById('userName').value.trim();
+    const address = document.getElementById('userAddress').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
+
+    if (!id || !name || !email) {
+        alert("يجب ملء الحقول المطلوبة.");
+        return;
+    }
+
+    const newUser = { id, name, address, email };
+
+    if (editIndex !== null) {
+        users[editIndex] = newUser;
+        editIndex = null;
+        document.getElementById('submitBtn').textContent = "Add User";
+    } else {
+        users.push(newUser);
+    }
+
+    this.reset();
+    renderTable();
+});
+
+document.addEventListener('DOMContentLoaded', renderTable);
